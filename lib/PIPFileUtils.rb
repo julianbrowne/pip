@@ -52,11 +52,12 @@ module PIPFileUtils
 			}
 		end
 
-		if file_exists?(@file_locations.page_not_found)
-			return @file_locations.page_not_found
-		else
-			return nil
-		end
+		file404 = "#{APP_ROOT}/#{@files.not_found}"
+
+		return file404 if file_exists?(file404)
+			
+		return nil
+
 	end
 
 end

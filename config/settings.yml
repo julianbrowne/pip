@@ -25,19 +25,22 @@ http:
 
 #
 #	Directory locations
-#	- should be specified from site.base (i.e. install directory)
+#	- should be specified as physical file relative to site.base as set above
 #
-
-file_locations:
-  page_not_found:        public/pages/admin/page_not_found.rhtml
-  page_toolbar:          public/pages/admin/toolbar.html
 
 files:
   pages:                 public/pages
   cache:                 public/cache
   layouts:               public/layouts
+  not_found:             public/pages/admin/page_not_found.rhtml
+  toolbar:               public/pages/admin/toolbar.html
+
+#
+# URL locations
+# - should be specified as url prefixes for page assets etc
+#
 
 urls:
-  stylesheets:           /~julian/pip/public/stylesheets
-  images:                /~julian/pip/public/images
-  javascripts:           /~julian/pip/public/javascripts
+  stylesheets:           /pip/public/stylesheets
+  images:                /pip/public/images
+  javascripts:           /pip/public/javascripts

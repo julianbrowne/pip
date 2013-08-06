@@ -15,7 +15,10 @@ module PIPPageUtils
 	end
 
 	def extract_title(page_content)
-		if match = page_content.match(/<title>(\s*(.*)\s*)<\/title>/iu)
+
+		title_regex = Regexp.new("/<title>(\s*(.*)\s*)<\/title>/iu".encode("UTF-8"),0)
+
+		if match = page_content.match(title_regex)
 			title = match[0]
 			title.sub!(/<title>/i,"")
 			title.sub!(/<\/title>/i,"")

@@ -21,6 +21,7 @@ class PageController
 
 		@page.class.module_eval { attr_accessor :title }
 		@page.class.module_eval { attr_accessor :content }
+		@page.class.module_eval { attr_accessor :layout }
 		@page.class.module_eval { attr_accessor :uri }
 
 		@page.uri = ENV['REQUEST_URI']
@@ -29,8 +30,14 @@ class PageController
 	end
 
 	def build_page
-		file_required = find_file_from_page(@page.uri)
-    	file_required ? render_file(file_required) : render("<h1>Error</h1><p>Set-up error - url #{@page.uri} could not be mapped.</p>")
+		file_on_disk = find_file_from_page(@page.uri)
+		if file_on_disk.nil?
+			#cgi.header "status" => "NOT_FOUND"
+			render("<h1>Error</h1><p>Set-up error - url #{@page.uri} could not be mapped.</p><p>#{@flash}</p>")
+		else
+			flash(:debug, "Found file #{file_on_disk}")
+			render_file(file_on_disk)
+		end
 	end
 
 	private
@@ -69,30 +76,33 @@ class PageController
 			page_content =  ERB.new(input).result(binding)
 			@page.title  = @page.title_prefix + (extract_title(page_content) || @page.title_default)
 		else
-			fragment_content = fetch_contents_of(page_fragment_file_path)
-			page_content     = clean_page(fragment_content)
+			fragment = fetch_contents_of(page_fragment_file_path)
+			page_content = clean_page(fragment)
 			@page.title      = @page.title_prefix + (extract_title(page_content) || @page.title_default)
 		end
-		render page_content
+		render_templated_content page_content
 	end
 
-	def render(content, layout=nil)
+	def render(content)
 		@page.content = content
+		flash(:info, "rendering layout-free content")
+		output = ERB.new(@page.content).result(binding)
+		deliver(output)
+	end
+
+	def render_templated_content(content, template=nil)
+		@page.content = content
+		@page.layout  = template.nil? ? "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}" : "#{APP_ROOT}/#{@files.layouts}/#{template}.rhtml"
+		outline = File.read(@page.layout)
+		flash(:info, "rendering content with layout: #{@page.layout}")
+		output = ERB.new(outline).result(binding)
+		deliver(output)
+	end
+
+	def deliver(content)
 		cgi = CGI.new("html4")
-		if layout
-			decorater = "#{APP_ROOT}/#{@files.layouts}/#{layout}.rhtml"
-		else
-			decorater = "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}"
-		end
-		input = File.read(decorater)
-		flash(:info, "rendering layout: #{decorater}")
-		output = ERB.new(input).result(binding)
-		if defined? @test_mode
-			puts cgi.inspect
-		else
-			cgi.print cgi.header
-			cgi.print output
-		end
+		cgi.print cgi.header
+		cgi.print content
 	end
 
 end
