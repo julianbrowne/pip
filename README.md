@@ -31,6 +31,18 @@ to cater for any special local settings.
 Edit or create a new layout/site template file. The default can be found at:
 
 	{PIP_ROOT}/public_html/layouts/default.rhtml
+	
+All site pages will use this layout by default. To use another layout for one particular file then simply make sure the layout exists:
+
+	{PIP_ROOT}/public_html/layouts/happy.rhtml
+
+(this alternative template is included)
+
+And include the following in the page itself
+
+	<% layout "happy" %>
+	
+And make sure the page is saved with a *.rhtml extension
 
 Then just add pages as needed under:
 
