@@ -24,4 +24,18 @@ Edit the file:
 
 	{PIP_ROOT}/config/settings.yml   
 	
-Stop and restart the Apache server
+to cater for any special local settings.
+
+Edit or create a new layout/site template file. The default can be found at:
+
+	{PIP_ROOT}/public_html/layouts/default.rhtml
+
+Then just add pages as needed under:
+
+	{PIP_ROOT}/public_html/pages
+
+Pages can be linked to one another via full or relative URLs, just as if they were locally hosted. Some example files are included.
+
+	{PIP_ROOT}/public_html/pages/index.html
+	{PIP_ROOT}/public_html/pages/page.htm
+	{PIP_ROOT}/public_html/pages/subfolder/page.html
