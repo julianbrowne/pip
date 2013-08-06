@@ -53,3 +53,53 @@ Pages can be linked to one another via full or relative URLs, just as if they we
 	{PIP_ROOT}/public_html/pages/index.html
 	{PIP_ROOT}/public_html/pages/page.htm
 	{PIP_ROOT}/public_html/pages/subfolder/page.html
+	
+###Making a Template
+
+Here's a simple example template:
+
+	<html>
+	<head>
+		<%= stylesheet_link_tag 'happy'  %>
+		<title><%= @page.title %></title>
+	</head>
+	<body>
+		<h1><%= @site.name %></h1>
+		<%= @page.content %>
+	</body>
+	</html>   
+   
+This line
+   
+	<%= stylesheet_link_tag 'happy'  %>
+
+sets the stylesheet to use for the template. By default PIP will look in:
+
+	{PIP_ROOT}/public_html/stylesheets
+	
+for a file called happy.css
+
+	<title><%= @page.title %></title>
+
+When a site page is processed PIP looks for a <title>…</title> tag combination and stores that in @page.title (@page stores a whole collection of useful bits of data). By recalling it within the template the final rendered browser page title will be that extracted from the original page fragment - plus any site-wide suffix set in settings.yml
+
+	<h1><%= @site.name %></h1>
+
+As for @page, @site contains useful web site information. In this case we're setting <h1>…</h1> on all site pages to contain the name of the site set in settings.yml
+
+	<%= @page.content %>
+
+Finally this line renders the content of the page fragment within the enclosing template. So the browser gets something like:
+
+	<html>
+	<head>
+	<!-- data from template -->
+	<title>**title** from page fragment</title>
+	</head>
+	<body>
+		<!-- other content from template -->
+		<!-- **content** from page fragment -->
+		<!-- other content from template -->
+	</body>
+	</html>
+
