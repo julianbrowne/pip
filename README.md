@@ -1,13 +1,13 @@
 
 ##PIP
 
-PIP (page-in-page) is a ludicrously simple web hosting framework designed to work in most ISP hosting environments.
+PIP (page-in-page) is a ludicrously simple and non-intrusive web content management framework designed to work in most ISP hosting environments.
 
 PIP is designed to meet the following requirements:   
 
 *	A web site is needed that is mostly static content
 *	Owner of the site has access to some form of basic text/HTML editor
-*	Owner of the site has little or no no scripting/development knowledge
+*	Owner of the site has little or no scripting/development knowledge
 *	Pages across the site need to share various assets (images, styling, header/footer fragments, etc)
 *	Some pages need to be different than the others (different layout for example)
 *	Some pages are full html whereas others are html clippings of paragraph fragments, headings etc
@@ -81,11 +81,11 @@ for a file called happy.css
 
 	<title><%= @page.title %></title>
 
-When a site page is processed PIP looks for a <title>…</title> tag combination and stores that in @page.title (@page stores a whole collection of useful bits of data). By recalling it within the template the final rendered browser page title will be that extracted from the original page fragment - plus any site-wide suffix set in settings.yml
+When a site page is processed PIP looks for a \<title>…\</title> tag combination and stores that in @page.title (@page stores a whole collection of useful bits of data). By recalling it within the template the final rendered browser page title will be that extracted from the original page fragment - plus any site-wide suffix set in settings.yml
 
 	<h1><%= @site.name %></h1>
 
-As for @page, @site contains useful web site information. In this case we're setting <h1>…</h1> on all site pages to contain the name of the site set in settings.yml
+As for @page, @site contains useful web site information. In this case we're setting \<h1>…\</h1> on all site pages to contain the name of the site set in settings.yml
 
 	<%= @page.content %>
 
