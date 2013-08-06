@@ -74,11 +74,11 @@ class PageController
 		if page_fragment_file_path =~ /\.rhtml$/
 			input = File.read(page_fragment_file_path)
 			page_content =  ERB.new(input).result(binding)
-			@page.title  = @page.title_prefix + (extract_title(page_content) || @page.title_default)
+			@page.title  = (extract_title(page_content) || @page.title_default) + @page.title_suffix
 		else
 			fragment = fetch_contents_of(page_fragment_file_path)
 			page_content = clean_page(fragment)
-			@page.title      = @page.title_prefix + (extract_title(page_content) || @page.title_default)
+			@page.title  = (extract_title(page_content) || @page.title_default) + @page.title_suffix
 		end
 		render_templated_content page_content
 	end
@@ -92,7 +92,8 @@ class PageController
 
 	def render_templated_content(content, template=nil)
 		@page.content = content
-		@page.layout  = template.nil? ? "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}" : "#{APP_ROOT}/#{@files.layouts}/#{template}.rhtml"
+		@page.layout  = template.nil? ? "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}.rhtml" : "#{APP_ROOT}/#{@files.layouts}/#{template}.rhtml"
+		@page.layout  = "#{APP_ROOT}/#{@files.layouts}/#{@layout}.rhtml" if @layout
 		outline = File.read(@page.layout)
 		flash(:info, "rendering content with layout: #{@page.layout}")
 		output = ERB.new(outline).result(binding)

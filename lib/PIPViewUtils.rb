@@ -19,4 +19,8 @@ module PIPViewUtils
 		@flash[message_class] << "<li>" + message_text + "</li>"
 	end
 
+	def layout(template)
+		@layout = template
+	end
+
 end
