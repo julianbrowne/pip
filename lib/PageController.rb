@@ -18,23 +18,26 @@ class PageController
 	def initialize(root)
 		@root = root
 		settings
-		#@settings = get_settings
-		@page_required = ENV['REQUEST_URI']
-		@default_app_settings = {
-			:site_name => "Default Site Name"
-		}
+
+		@page.class.module_eval { attr_accessor :title }
+		@page.class.module_eval { attr_accessor :content }
+		@page.class.module_eval { attr_accessor :uri }
+
+		@page.uri = ENV['REQUEST_URI']
+		@page.title = @page.title_default
 		
 	end
 
 	def build_page
-		file_required = find_file_from_page(@page_required)
-    	file_required ? render_file(file_required) : render("<h1>Error</h1><p>Set-up error - url #{@page_required} could not be mapped.</p>")
+		file_required = find_file_from_page(@page.uri)
+    	file_required ? render_file(file_required) : render("<h1>Error</h1><p>Set-up error - url #{@page.uri} could not be mapped.</p>")
 	end
 
 	private
 
 	def settings
 		settings_file = "#{@root}/config/settings.yml"
+		YAML::ENGINE.yamler = 'psych'
 		if FileTest.exist?(settings_file)
 			yml = YAML::load_file(settings_file)
 			yml.each_pair do |section, keys|
@@ -44,14 +47,11 @@ class PageController
 					instance_variable_get("@#{section}".to_sym).send("#{setting}=", value)
 				end
 			end
-			flash(:info, "Site Data : #{@site.inspect}<br/>")
+			flash(:info, "@site => <code>#{CGI::escapeHTML(@site.inspect.to_s)}</code>")
+			flash(:info, "@page => <code>#{CGI::escapeHTML(@page.inspect.to_s)}</code>")
 		else
 			render "Can't find config file #{settings_file}"
 		end
-	end
-
-	def default_for(app_setting_name)
-		@default_app_settings[app_setting_name]
 	end
 
 	def debug_page
@@ -64,9 +64,6 @@ class PageController
 	end
 
 	def render_file(page_fragment_file_path)
-
-		@page.class.module_eval { attr_accessor :title }
-
 		if page_fragment_file_path =~ /\.rhtml$/
 			input = File.read(page_fragment_file_path)
 			page_content =  ERB.new(input).result(binding)
@@ -80,7 +77,7 @@ class PageController
 	end
 
 	def render(content, layout=nil)
-		@page_content = content
+		@page.content = content
 		cgi = CGI.new("html4")
 		if layout
 			decorater = "#{APP_ROOT}/#{@files.layouts}/#{layout}.rhtml"

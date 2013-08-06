@@ -16,7 +16,7 @@ module PIPViewUtils
 	def flash(message_class,message_text)
 		@flash ||= {}
 		@flash[message_class] ||= []
-		@flash[message_class] << message_text + "<br/>"
+		@flash[message_class] << "<li>" + message_text + "</li>"
 	end
 
 end

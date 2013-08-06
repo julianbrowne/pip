@@ -52,8 +52,8 @@ module PIPFileUtils
 			}
 		end
 
-		if file_exists?(@page_not_found)
-			return @page_not_found
+		if file_exists?(@file_locations.page_not_found)
+			return @file_locations.page_not_found
 		else
 			return nil
 		end

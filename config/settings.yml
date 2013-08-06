@@ -4,7 +4,7 @@
 
 site:
   name:              "PIP Test Site"
-  base:              /~julian/pip/public/
+  base:              /pip/public/                       # url root of site (i.e. what comes after host name for all pages)
 
 #
 # Page settings
@@ -13,7 +13,7 @@ site:
 page:
   default:           index
   title_prefix:      "pip | "
-  title_default:     "page title"
+  title_default:     "default page title"
   endings:
     - html
     - htm
@@ -41,4 +41,3 @@ urls:
   stylesheets:           /~julian/pip/public/stylesheets
   images:                /~julian/pip/public/images
   javascripts:           /~julian/pip/public/javascripts
-
