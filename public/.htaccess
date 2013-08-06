@@ -1,0 +1,17 @@
+
+Options +ExecCGI
+Options +FollowSymlinks
+
+AddHandler cgi-script .rb
+
+RewriteEngine On
+
+RewriteCond %{REQUEST_URI} (/|\.pdf|\.raw|/[^.]*)$ [NC]
+
+RewriteRule ^$ index.html [QSA]
+RewriteRule ^([^.]+)$ index.html [QSA]
+
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^(.*)$ dispatcher.rb [QSA,L]
+
+ErrorDocument 500 /public/500.html

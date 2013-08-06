@@ -1,0 +1,44 @@
+#
+#	General site settings 
+#
+
+site:
+  name:              "PIP Test Site"
+  base:              /~julian/pip/public/
+
+#
+# Page settings
+#
+
+page:
+  default:           index
+  title_prefix:      "pip | "
+  title_default:     "page title"
+  endings:
+    - html
+    - htm
+    - shtml
+  layout_default:    default.rhtml
+
+http:
+  Server:             pip-server
+
+#
+#	Directory locations
+#	- should be specified from site.base (i.e. install directory)
+#
+
+file_locations:
+  page_not_found:        public/pages/admin/page_not_found.rhtml
+  page_toolbar:          public/pages/admin/toolbar.html
+
+files:
+  pages:                 public/pages
+  cache:                 public/cache
+  layouts:               public/layouts
+
+urls:
+  stylesheets:           /~julian/pip/public/stylesheets
+  images:                /~julian/pip/public/images
+  javascripts:           /~julian/pip/public/javascripts
+
