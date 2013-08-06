@@ -4,7 +4,7 @@
 
 site:
   name:              "PIP Test Site"
-  base:              /pip/public/                       # url root of site (i.e. what comes after host name for all pages)
+  base:              /pip/public_html/                       # url root of site (i.e. what comes after host name for all pages)
 
 #
 # Page settings
@@ -29,11 +29,11 @@ http:
 #
 
 files:
-  pages:                 public/pages
-  cache:                 public/cache
-  layouts:               public/layouts
-  not_found:             public/pages/admin/page_not_found.rhtml
-  toolbar:               public/pages/admin/toolbar.html
+  pages:                 public_html/pages
+  cache:                 public_html/cache
+  layouts:               public_html/layouts
+  not_found:             public_html/pages/admin/page_not_found.rhtml
+  toolbar:               public_html/pages/admin/toolbar.html
 
 #
 # URL locations
@@ -41,6 +41,6 @@ files:
 #
 
 urls:
-  stylesheets:           /pip/public/stylesheets
-  images:                /pip/public/images
-  javascripts:           /pip/public/javascripts
+  stylesheets:           /pip/public_html/stylesheets
+  images:                /pip/public_html/images
+  javascripts:           /pip/public_html/javascripts
