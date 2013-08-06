@@ -4,7 +4,7 @@
 
 site:
   name:              "PIP Test Site"
-  base:              /pip/public_html/                       # url root of site (i.e. what comes after host name for all pages)
+  base:              /                   # url root of site (i.e. what comes after host name for all pages)
 
 #
 # Page settings
@@ -37,10 +37,10 @@ files:
 
 #
 # URL locations
-# - should be specified as url prefixes for page assets etc
+# - should be specified as url prefixes for page assets etc (often site.base from above)
 #
 
 urls:
-  stylesheets:           /pip/public_html/stylesheets
-  images:                /pip/public_html/images
-  javascripts:           /pip/public_html/javascripts
+  stylesheets:           /stylesheets
+  images:                /images
+  javascripts:           /javascripts

@@ -5,28 +5,8 @@
 	<%= stylesheet_link_tag 'default' %>
 </head>
 <body>
-<div id="container">
-	<div id="header">
-		<div id="title">
-			PIP: Page-In-Page mini CMS
-		</div>
-		<div id="logo">
-			<a href="/"><%= image_link_tag "logo.png" %></a>
-		</div>
-	</div>
-	<!-- end header -->
-	<div id="main">
-		<%= @page.content %>
-	</div>
-	<!-- end main -->
-	<div style="clear: both;">&nbsp;</div>
-	<div id="footer">
-		footer here
-	</div>
-	<!-- end footer -->
-	<div style="clear: both; margin: 10px auto; width: 80%; padding: 5px; color: red;">
-		<!-- <%= @flash %> -->
-	</div>
-</div>
+	<div id="header">PIP: Page-In-Page Mini CMS</div>
+	<%= @page.content %>
+	<div id="footer">--- default layout footer (layouts/default.rhtml) goes here ---</div>
 </body>
 </html>
