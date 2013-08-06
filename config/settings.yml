@@ -4,21 +4,21 @@
 
 site:
   name:              "PIP Test Site"
-  base:              /                   # url root of site (i.e. what comes after host name for all pages)
+  base:              /                      # url root of site (i.e. either "/" for most sites or /path/to/site where all pages are of the form "http://{host}/path/to/site/{page}")
 
 #
 # Page settings
 #
 
 page:
-  default:           index
-  title_prefix:      "pip | "
-  title_default:     "default page title"
-  endings:
+  default:           index                  # default load page prefix where no page name is given. Usually "index"
+  title_suffix:      "pip | "               # page title suffix for SEO purposes e.g. <title>actial page title | site name</title>
+  title_default:     "default page title"   # page title to use where none is supplied
+  endings:                                  # pages suffixes to look for when none is given e.g. /index would map to index.html, index.shtml, etc
     - html
     - htm
     - shtml
-  layout_default:    default.rhtml
+  layout_default:    default.rhtml          # layout file name (in files/layouts below) to use for site pages where none is specified (usually most/all pages)
 
 http:
   Server:             pip-server
