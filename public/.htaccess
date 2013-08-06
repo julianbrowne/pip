@@ -15,3 +15,4 @@ RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ dispatcher.rb [QSA,L]
 
 ErrorDocument 500 /public/500.html
+ErrorDocument 404 /public/500.html
