@@ -22,8 +22,7 @@ class PageController
 	def build_page
 		file_on_disk = find_file_from_page(@page.uri)
 		if file_on_disk.nil?
-			#cgi.header "status" => "NOT_FOUND"
-			render("<h1>Error</h1><p>Set-up error - url #{@page.uri} could not be mapped.</p><p>#{@flash}</p>")
+			render_error "NOT_FOUND", "Page #{@page.uri}"
 		else
 			flash(:debug, "Found file #{file_on_disk}")
 			render_file(file_on_disk)
@@ -53,7 +52,7 @@ class PageController
 		if ((ruby_version_installed[0] < ruby_version_required[0]) or
 			(ruby_version_installed[1] < ruby_version_required[1]) or
 			(ruby_version_installed[2] < ruby_version_required[2]))
-			render_error "Incorrect Ruby version", "You have #{RUBY_VERSION} installed", "PIP requires #{RUBY_VERSION_REQUIRED} or higher"
+			render_error "SERVER_ERROR", "Incorrect Ruby version", "You have #{RUBY_VERSION} installed", "PIP requires #{RUBY_VERSION_REQUIRED} or higher"
 		end
 
 		set_settings "#{root}/config/pip.yml"
@@ -85,7 +84,7 @@ class PageController
 			flash(:info, "@site => #{CGI::escapeHTML(@site.inspect.to_s)}")
 			flash(:info, "@page => #{CGI::escapeHTML(@page.inspect.to_s)}")
 		else
-			render_error "Can't find config file #{file}"
+			render_error "SERVER_ERROR", "Can't find config file #{file}"
 		end
 	end
 
@@ -109,7 +108,7 @@ class PageController
 		deliver(output)
 	end
 
-	def render_error(*content_strings)
+	def render_error(code, *content_strings)
 		template = "
 		<style>
 			body {
@@ -124,13 +123,13 @@ class PageController
 				color: #FF6633;
 			}
 		</style>
-		<h1>Set-up Issue</h1>
+		<h1>Error</h1>
 		<% for line in content_strings %>
 			<p><%= line %></p>
 		<% end %>"
 		flash(:debug, "rendering error")
 		output = ERB.new(template).result(binding)
-		deliver(output)
+		deliver(output, code)
 	end
 
 	def render_templated_content(content, template=nil)
@@ -140,7 +139,7 @@ class PageController
 		@page.layout  = @layout if @layout
 		@page.layout_file = "#{APP_ROOT}/#{@files.layouts}/#{@page.layout}.rhtml"
 
-		render_error "Can't find layout '#{@page.layout}'" if(!FileTest.exist?(@page.layout_file))
+		render_error "SERVER_ERROR", "Can't find layout '#{@page.layout}'" if(!FileTest.exist?(@page.layout_file))
 
 		outline = File.read(@page.layout_file)
 		flash(:debug, "rendering content with layout: #{@page.layout} at #{@page.layout_file}")
@@ -148,9 +147,9 @@ class PageController
 		deliver(output)
 	end
 
-	def deliver(content)
+	def deliver(content, code="OK")
 		cgi = CGI.new("html4")
-		cgi.print cgi.header
+		cgi.print cgi.header("status" => code)
 		cgi.print content
 		cgi.print @flash if @pip.debug
 		Process.exit

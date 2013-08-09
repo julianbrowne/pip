@@ -6,4 +6,4 @@ files:
    error:       "public_html/error.rhtml"		# page to use for errors
 
 pip:
-   debug: true
+   debug: false
