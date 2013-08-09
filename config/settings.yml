@@ -21,9 +21,6 @@ page:
     - shtml
   layout_default:    default                # layout file name (in files/layouts below) to use for site pages where none is specified (usually most/all pages)
 
-http:
-  Server:             pip-server
-
 #
 #	Directory locations
 #	- should be specified as physical file relative to site.base as set above
@@ -33,8 +30,8 @@ files:
   pages:                 public_html/pages
   cache:                 public_html/cache
   layouts:               public_html/layouts
-  not_found:             public_html/pages/admin/page_not_found.rhtml
-  toolbar:               public_html/pages/admin/toolbar.html
+  not_found:             public_html/pages/admin/not_found.rhtml
+  error:                 public_html/pages/admin/error.rhtml
 
 #
 # URL locations

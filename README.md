@@ -16,7 +16,7 @@ PIP has the following dependencies:
 
 *	Hosting provider runs Apache 2
 *	Hosting provider allows CGI scripts to be run
-*	Hosting provider supports Ruby 1.8 or greater
+*	Hosting provider supports Ruby 1.8.7 or greater
 
 ###Installation
 

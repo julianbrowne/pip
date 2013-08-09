@@ -13,10 +13,10 @@ module PIPViewUtils
 		"<script src=\"#{@urls.scripts}/#{script_name}.js\"></script>"
 	end
 
-	def flash(message_class,message_text)
+	def flash(message_class, message_text)
 		@flash ||= {}
 		@flash[message_class] ||= []
-		@flash[message_class] << "<li>" + message_text + "</li>"
+		@flash[message_class] << "<li style='font-family: helvetica; margin-left: 20px; color: #FF6633;'>" + message_text + "</li>"
 	end
 
 	def layout(template)

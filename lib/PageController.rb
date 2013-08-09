@@ -16,17 +16,7 @@ class PageController
 	include PIPFileUtils
 
 	def initialize(root)
-		@root = root
-		settings
-
-		@page.class.module_eval { attr_accessor :title }
-		@page.class.module_eval { attr_accessor :content }
-		@page.class.module_eval { attr_accessor :layout }
-		@page.class.module_eval { attr_accessor :uri }
-
-		@page.uri = ENV['REQUEST_URI']
-		@page.title = @page.title_default
-		
+		checks_and_settings(root)
 	end
 
 	def build_page
@@ -42,23 +32,49 @@ class PageController
 
 	private
 
-	def settings
-		settings_file = "#{@root}/config/settings.yml"
-		YAML::ENGINE.yamler = 'psych'
+	def checks_and_settings(root)
+
+		@site = Object.new
+
+		@page = Object.new
+		@page.class.module_eval { attr_accessor :title }
+		@page.class.module_eval { attr_accessor :content }
+		@page.class.module_eval { attr_accessor :layout }
+		@page.class.module_eval { attr_accessor :uri }
+		@page.uri = ENV['REQUEST_URI']
+
+		@files = Object.new
+
+		@urls = Object.new
+
+		ruby_version_installed = RUBY_VERSION.split(".")
+		ruby_version_required  = RUBY_VERSION_REQUIRED.split(".")
+
+		if ((ruby_version_installed[0] < ruby_version_required[0]) or
+			(ruby_version_installed[1] < ruby_version_required[1]) or
+			(ruby_version_installed[2] < ruby_version_required[2]))
+			render_error "Incorrect Ruby version", "You have #{RUBY_VERSION} installed", "PIP requires #{RUBY_VERSION_REQUIRED} or higher"
+		end
+
+		settings_file = "#{root}/config/settings.yml"
+
+		YAML::ENGINE.yamler= 'syck' if defined?(YAML::ENGINE)
+
 		if FileTest.exist?(settings_file)
 			yml = YAML::load_file(settings_file)
 			yml.each_pair do |section, keys|
-				instance_variable_set("@#{section}".to_sym, Object.new)
+				instance_variable_set("@#{section}".to_sym, Object.new) unless defined? "@#{section}".to_sym
 				keys.each_pair do |setting,value|
 					instance_variable_get("@#{section}".to_sym).class.module_eval { attr_accessor "#{setting}".to_sym }
 					instance_variable_get("@#{section}".to_sym).send("#{setting}=", value)
 				end
 			end
-			flash(:info, "@site => <code>#{CGI::escapeHTML(@site.inspect.to_s)}</code>")
-			flash(:info, "@page => <code>#{CGI::escapeHTML(@page.inspect.to_s)}</code>")
+			flash(:info, "@site => #{CGI::escapeHTML(@site.inspect.to_s)}")
+			flash(:info, "@page => #{CGI::escapeHTML(@page.inspect.to_s)}")
 		else
-			render "Can't find config file #{settings_file}"
+			render_error "Can't find config file #{settings_file}"
 		end
+
 	end
 
 	def debug_page
@@ -85,8 +101,32 @@ class PageController
 
 	def render(content)
 		@page.content = content
-		flash(:info, "rendering layout-free content")
+		flash(:debug, "rendering layout-free content")
 		output = ERB.new(@page.content).result(binding)
+		deliver(output)
+	end
+
+	def render_error(*content_strings)
+		template = "
+		<style>
+			body {
+				font-family: helvetica;
+			}
+			h1 {
+				color: #FF0033;
+				font-size: 20px;
+			}
+			p {
+				font-size: 18px;
+				color: #FF6633;
+			}
+		</style>
+		<h1>Set-up Issue</h1>
+		<% for line in content_strings %>
+			<p><%= line %></p>
+		<% end %>"
+		flash(:debug, "rendering error")
+		output = ERB.new(template).result(binding)
 		deliver(output)
 	end
 
@@ -95,7 +135,7 @@ class PageController
 		@page.layout  = template.nil? ? "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}.rhtml" : "#{APP_ROOT}/#{@files.layouts}/#{template}.rhtml"
 		@page.layout  = "#{APP_ROOT}/#{@files.layouts}/#{@layout}.rhtml" if @layout
 		outline = File.read(@page.layout)
-		flash(:info, "rendering content with layout: #{@page.layout}")
+		flash(:debug, "rendering content with layout: #{@page.layout}")
 		output = ERB.new(outline).result(binding)
 		deliver(output)
 	end
@@ -104,6 +144,7 @@ class PageController
 		cgi = CGI.new("html4")
 		cgi.print cgi.header
 		cgi.print content
+		Process.exit
 	end
 
 end

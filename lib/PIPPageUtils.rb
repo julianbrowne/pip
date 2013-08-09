@@ -16,7 +16,7 @@ module PIPPageUtils
 
 	def extract_title(page_content)
 
-		title_regex = Regexp.new("/<title>(\s*(.*)\s*)<\/title>/iu".encode("UTF-8"),0)
+		title_regex = Regexp.new("/<title>(\s*(.*)\s*)<\/title>/iu",0)
 
 		if match = page_content.match(title_regex)
 			title = match[0]
