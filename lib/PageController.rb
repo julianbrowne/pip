@@ -40,12 +40,12 @@ class PageController
 		@page.class.module_eval { attr_accessor :title }
 		@page.class.module_eval { attr_accessor :content }
 		@page.class.module_eval { attr_accessor :layout }
+		@page.class.module_eval { attr_accessor :layout_file }
 		@page.class.module_eval { attr_accessor :uri }
 		@page.uri = ENV['REQUEST_URI']
 
 		@files = Object.new
-
-		@urls = Object.new
+		@urls  = Object.new
 
 		ruby_version_installed = RUBY_VERSION.split(".")
 		ruby_version_required  = RUBY_VERSION_REQUIRED.split(".")
@@ -56,24 +56,8 @@ class PageController
 			render_error "Incorrect Ruby version", "You have #{RUBY_VERSION} installed", "PIP requires #{RUBY_VERSION_REQUIRED} or higher"
 		end
 
-		settings_file = "#{root}/config/settings.yml"
-
-		YAML::ENGINE.yamler= 'syck' if defined?(YAML::ENGINE)
-
-		if FileTest.exist?(settings_file)
-			yml = YAML::load_file(settings_file)
-			yml.each_pair do |section, keys|
-				instance_variable_set("@#{section}".to_sym, Object.new) unless defined? "@#{section}".to_sym
-				keys.each_pair do |setting,value|
-					instance_variable_get("@#{section}".to_sym).class.module_eval { attr_accessor "#{setting}".to_sym }
-					instance_variable_get("@#{section}".to_sym).send("#{setting}=", value)
-				end
-			end
-			flash(:info, "@site => #{CGI::escapeHTML(@site.inspect.to_s)}")
-			flash(:info, "@page => #{CGI::escapeHTML(@page.inspect.to_s)}")
-		else
-			render_error "Can't find config file #{settings_file}"
-		end
+		set_settings "#{root}/config/pip.yml"
+		set_settings "#{root}/config/site.yml"
 
 	end
 
@@ -84,6 +68,25 @@ class PageController
 		debug << "<p>Uri = " + "#{ENV['REQUEST_URI']}</p>"
 		debug << "<p>Site Name = #{@site_name}</p>"
 		render(debug)
+	end
+
+	def set_settings(file)
+		YAML::ENGINE.yamler= 'syck' if defined?(YAML::ENGINE)
+
+		if FileTest.exist?(file)
+			yml = YAML::load_file(file)
+			yml.each_pair do |section, keys|
+				instance_variable_set("@#{section}".to_sym, Object.new) unless defined? "@#{section}".to_sym
+				keys.each_pair do |setting,value|
+					instance_variable_get("@#{section}".to_sym).class.module_eval { attr_accessor "#{setting}".to_sym }
+					instance_variable_get("@#{section}".to_sym).send("#{setting}=", value)
+				end
+			end
+			flash(:info, "@site => #{CGI::escapeHTML(@site.inspect.to_s)}")
+			flash(:info, "@page => #{CGI::escapeHTML(@page.inspect.to_s)}")
+		else
+			render_error "Can't find config file #{file}"
+		end
 	end
 
 	def render_file(page_fragment_file_path)
@@ -132,10 +135,15 @@ class PageController
 
 	def render_templated_content(content, template=nil)
 		@page.content = content
-		@page.layout  = template.nil? ? "#{APP_ROOT}/#{@files.layouts}/#{@page.layout_default}.rhtml" : "#{APP_ROOT}/#{@files.layouts}/#{template}.rhtml"
-		@page.layout  = "#{APP_ROOT}/#{@files.layouts}/#{@layout}.rhtml" if @layout
-		outline = File.read(@page.layout)
-		flash(:debug, "rendering content with layout: #{@page.layout}")
+
+		@page.layout  = template.nil? ? @page.layout_default : template
+		@page.layout  = @layout if @layout
+		@page.layout_file = "#{APP_ROOT}/#{@files.layouts}/#{@page.layout}.rhtml"
+
+		render_error "Can't find layout '#{@page.layout}'" if(!FileTest.exist?(@page.layout_file))
+
+		outline = File.read(@page.layout_file)
+		flash(:debug, "rendering content with layout: #{@page.layout} at #{@page.layout_file}")
 		output = ERB.new(outline).result(binding)
 		deliver(output)
 	end
@@ -144,6 +152,7 @@ class PageController
 		cgi = CGI.new("html4")
 		cgi.print cgi.header
 		cgi.print content
+		cgi.print @flash if @pip.debug
 		Process.exit
 	end
 

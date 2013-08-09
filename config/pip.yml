@@ -1,0 +1,9 @@
+
+files:
+   pages:       "public_html/pages"				# where raw pages/fragments are found
+   layouts:     "layouts"					# where decoration/layout pages are found
+   not_found:   "public_html/not_found.rhtml"	# page to use for 404/not found
+   error:       "public_html/error.rhtml"		# page to use for errors
+
+pip:
+   debug: true

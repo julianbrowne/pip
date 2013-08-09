@@ -14,5 +14,5 @@ RewriteRule ^([^.]+)$ index.html [QSA]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteRule ^(.*)$ dispatcher.rb [QSA,L]
 
-ErrorDocument 500 /admin/error.html
-ErrorDocument 404 /admin/not_found.html
+ErrorDocument 500 "PIP Error - check logs"
+ErrorDocument 404 "PIP Error - file not found"
